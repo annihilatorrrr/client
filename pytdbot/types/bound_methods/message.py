@@ -134,6 +134,31 @@ class MessageBoundMethods:
 
         return unique_file_id
 
+    @property
+    @lru_cache(1)
+    def remote_file_size(self) -> int:
+        r"""Remote file size in bytes; 0 if unknown"""
+
+        file_size = 0
+        if isinstance(self.content, pytdbot.types.MessagePhoto):
+            file_size = self.content.photo.sizes[-1].photo.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageVideo):
+            file_size = self.content.video.video.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageSticker):
+            file_size = self.content.sticker.sticker.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageAnimation):
+            file_size = self.content.animation.animation.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageAudio):
+            file_size = self.content.audio.audio.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageDocument):
+            file_size = self.content.document.document.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageVoiceNote):
+            file_size = self.content.voice_note.voice.remote.uploaded_size
+        elif isinstance(self.content, pytdbot.types.MessageVideoNote):
+            file_size = self.content.video_note.video.remote.uploaded_size
+
+        return file_size
+
     async def mention(self, parse_mode: str = "html") -> str | None:
         r"""Get the text_mention of the message sender
 
